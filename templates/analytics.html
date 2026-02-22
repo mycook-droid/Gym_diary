@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics — Gym Diary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08090a;
+      --line: rgba(255, 255, 255, 0.1);
+      --text: #f2f5ec;
+      --muted: #8a9085;
+      --accent: #e8ff00;
+      --good: #2effa5;
+      --surface: rgba(16, 19, 21, 0.84);
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f4f6ef;
+      --bg-0: #f4f6ef;
+      --bg-1: #e9ece4;
+      --bg-2: #dde2d8;
+      --text: #121512;
+      --muted: #4f584c;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-soft: rgba(244, 247, 238, 0.95);
+      --line: rgba(17, 19, 17, 0.15);
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(232, 255, 0, 0.09), transparent 26%),
+        radial-gradient(circle at 92% 5%, rgba(232, 255, 0, 0.07), transparent 22%),
+        linear-gradient(180deg, #070809, #101315 46%, #181c1f);
+      padding-bottom: calc(120px + env(safe-area-inset-bottom));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(232, 255, 0, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232, 255, 0, 0.018) 1px, transparent 1px);
+      background-size: 38px 38px;
+      z-index: 0;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      background: rgba(8, 9, 10, 0.78);
+    }
+
+    .nav-logo {
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 3px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-btn {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.02);
+      color: #d4dacd;
+      border-radius: 999px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 13px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: rgba(232, 255, 0, 0.38);
+      color: var(--accent);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 20px 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 13vw, 52px);
+      letter-spacing: 2px;
+      line-height: 0.92;
+    }
+
+    .hero-sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      line-height: 1.6;
+    }
+
+    .section-title {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #9ca295;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 1px;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      margin-top: 4px;
+      font-size: 9px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: #90978b;
+    }
+
+    .strong-day {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #b3baae;
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
+      padding-top: 10px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trend-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .trend-toggle {
+      display: inline-flex;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .trend-btn {
+      border: none;
+      background: transparent;
+      color: #97a08f;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .trend-btn.active {
+      background: rgba(232, 255, 0, 0.18);
+      color: var(--accent);
+    }
+
+    .line-wrap {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 8px;
+    }
+
+    .line-svg {
+      width: 100%;
+      height: 140px;
+      display: block;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 72px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .bar-day {
+      font-size: 10px;
+      color: #a6ad9f;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bar-track {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #b0c100, var(--accent));
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    .bar-val {
+      font-size: 10px;
+      color: #98a08f;
+      text-align: right;
+    }
+
+    .message {
+      font-size: 11px;
+      color: #9ba395;
+      line-height: 1.7;
+      letter-spacing: 0.5px;
+    }
+
+    .loading { color: #9ba395; font-size: 11px; letter-spacing: 1px; }
+
+    .bottom-nav {
+      position: fixed;
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      width: min(100% - 16px, 500px);
+      z-index: 30;
+      background: rgba(13, 15, 17, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border-radius: 11px;
+      color: #aab1a5;
+      padding: 7px 4px;
+      font-size: 9px;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      transition: all 0.18s;
+    }
+
+    .nav-ico {
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0.92;
+    }
+
+    .bottom-nav a.active {
+      background: rgba(232, 255, 0, 0.14);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(232, 255, 0, 0.24) inset;
+    }
+
+    .app-footer {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 0 16px 10px;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #8d9588;
+    }
+
+    .app-footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .bottom-nav {
+        border-radius: 14px;
+        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(10, 12, 13, 0.9);
+        backdrop-filter: blur(8px);
+      }
+    }
+
+    @media (min-width: 720px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+      main { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="dashboard.html" class="nav-logo">GYM<span>.</span>DIARY</a>
+    <button class="nav-btn" onclick="Auth.logout()">Logout</button>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-title">Analytics</div>
+      <p class="hero-sub">Simple signals to see if your training is moving forward.</p>
+    </section>
+
+    <section class="panel">
+      <p class="section-title">Last 14 Days Snapshot</p>
+      <div id="stats-grid" class="stats-grid">
+        <div class="loading">Loading stats...</div>
+      </div>
+      <div id="strong-day" class="strong-day" style="display:none"></div>
+    </section>
+
+    <section class="panel">
+      <div class="trend-head">
+        <p class="section-title" style="margin:0">7-Day Volume Trend</p>
+        <div class="trend-toggle">
+          <button class="trend-btn active" id="btn-bar" onclick="setTrendMode('bar')">Bars</button>
+          <button class="trend-btn" id="btn-line" onclick="setTrendMode('line')">Line</button>
+        </div>
+      </div>
+      <div id="volume-bars" class="bars">
+        <div class="loading">Loading trend...</div>
+      </div>
+      <div id="volume-line" class="line-wrap" style="display:none"></div>
+    </section>
+
+    <section class="panel">
+      <p class="section-title">Coaching Insight</p>
+      <div id="insight" class="message">Calculating your consistency...</div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a>
+  </footer>
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-ico">🏋</span><span>Today</span></a>
+    <a href="splits.html"><span class="nav-ico">📋</span><span>Splits</span></a>
+    <a href="analytics.html" class="active"><span class="nav-ico">📈</span><span>Analytics</span></a>
+    <a href="profile.html"><span class="nav-ico">👤</span><span>Profile</span></a>
+  </nav>
+
+  <script src="/static/api.js"></script>
+  <script>
+    requireAuth();
+    let trendMode = "bar";
+    let recentTrend = [];
+
+    function formatDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function getDatesBack(days) {
+      const arr = [];
+      const now = new Date();
+      for (let i = 0; i < days; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        arr.push(d);
+      }
+      return arr.reverse();
+    }
+
+    async function loadAnalytics() {
+      const dates = getDatesBack(14);
+      const responses = await Promise.all(
+        dates.map(d => Logs.getByDate(formatDate(d)))
+      );
+
+      const dayStats = responses.map((res, idx) => {
+        const date = formatDate(dates[idx]);
+        if (!res.ok) return { date, sets: 0, volume: 0, exercises: 0 };
+
+        const exercises = res.data.exercises || [];
+        let sets = 0;
+        let volume = 0;
+
+        exercises.forEach(ex => {
+          (ex.sets || []).forEach(s => {
+            sets += 1;
+            volume += (Number(s.weight) || 0) * (Number(s.reps) || 0);
+          });
+        });
+
+        return { date, sets, volume, exercises: exercises.length };
+      });
+
+      renderSnapshot(dayStats);
+      recentTrend = dayStats.slice(-7);
+      renderTrend(recentTrend);
+      renderInsight(dayStats);
+    }
+
+    function renderSnapshot(dayStats) {
+      const sessions = dayStats.filter(d => d.sets > 0).length;
+      const totalSets = dayStats.reduce((sum, d) => sum + d.sets, 0);
+      const totalVolume = dayStats.reduce((sum, d) => sum + d.volume, 0);
+      const avgSets = sessions ? Math.round(totalSets / sessions) : 0;
+
+      const grid = document.getElementById('stats-grid');
+      grid.innerHTML = `
+        <div class="stat">
+          <div class="stat-value">${sessions}</div>
+          <div class="stat-label">Training Days</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${totalSets}</div>
+          <div class="stat-label">Total Sets</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${Math.round(totalVolume)}</div>
+          <div class="stat-label">Volume (kg×reps)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${avgSets}</div>
+          <div class="stat-label">Avg Sets/Session</div>
+        </div>
+      `;
+
+      const best = dayStats.reduce((top, d) => d.volume > top.volume ? d : top, { date: '', volume: 0, sets: 0 });
+      const strong = document.getElementById('strong-day');
+      if (best.volume > 0) {
+        strong.style.display = 'block';
+        strong.textContent = `Strongest day: ${best.date} with ${best.sets} sets and ${Math.round(best.volume)} total volume.`;
+      } else {
+        strong.style.display = 'block';
+        strong.textContent = 'No logged sessions in the last 14 days yet. Start with one session to unlock trends.';
+      }
+    }
+
+    function renderTrend(last7) {
+      const bars = document.getElementById('volume-bars');
+      const maxVol = Math.max(...last7.map(d => d.volume), 1);
+
+      bars.innerHTML = last7.map(d => {
+        const day = new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' });
+        const width = Math.round((d.volume / maxVol) * 100);
+        return `
+          <div class="bar-row">
+            <div class="bar-day">${day}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+            <div class="bar-val">${Math.round(d.volume)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderTrendLine(last7, maxVol);
+    }
+
+    function renderTrendLine(last7, maxVol) {
+      const container = document.getElementById('volume-line');
+      const width = 700;
+      const height = 140;
+      const padX = 26;
+      const padY = 16;
+      const usableW = width - padX * 2;
+      const usableH = height - padY * 2;
+
+      const points = last7.map((d, i) => {
+        const x = padX + (usableW * i) / Math.max(last7.length - 1, 1);
+        const y = padY + usableH - (d.volume / maxVol) * usableH;
+        return `${x},${y}`;
+      });
+
+      const circles = last7.map((d, i) => {
+        const x = padX + (usableW * i) / Math.max(last7.length - 1, 1);
+        const y = padY + usableH - (d.volume / maxVol) * usableH;
+        return `<circle cx="${x}" cy="${y}" r="3.6" fill="var(--accent)" />`;
+      }).join("");
+
+      container.innerHTML = `
+        <svg class="line-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+          <polyline
+            fill="none"
+            stroke="var(--accent)"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            points="${points.join(" ")}"
+          />
+          ${circles}
+        </svg>
+      `;
+      setTrendMode(trendMode);
+    }
+
+    function setTrendMode(mode) {
+      trendMode = mode;
+      const barWrap = document.getElementById("volume-bars");
+      const lineWrap = document.getElementById("volume-line");
+      const barBtn = document.getElementById("btn-bar");
+      const lineBtn = document.getElementById("btn-line");
+
+      const showBars = mode === "bar";
+      barWrap.style.display = showBars ? "grid" : "none";
+      lineWrap.style.display = showBars ? "none" : "block";
+      barBtn.classList.toggle("active", showBars);
+      lineBtn.classList.toggle("active", !showBars);
+    }
+
+    function renderInsight(dayStats) {
+      const insight = document.getElementById('insight');
+      const sessions = dayStats.filter(d => d.sets > 0).length;
+      const recent = dayStats.slice(-7).filter(d => d.sets > 0).length;
+
+      if (sessions === 0) {
+        insight.textContent = 'No sessions logged yet. Your next workout is the most important one.';
+        return;
+      }
+
+      if (recent >= 4) {
+        insight.textContent = 'Great consistency this week. Keep your frequency stable and focus on slight load/rep progress.';
+        return;
+      }
+
+      if (recent >= 2) {
+        insight.textContent = 'Solid momentum. Add one more session this week to make progress more predictable.';
+        return;
+      }
+
+      insight.textContent = 'You trained recently but consistency dropped. Start with a short session tomorrow to rebuild rhythm.';
+    }
+
+    loadAnalytics();
+  </script>
+</body>
+</html>

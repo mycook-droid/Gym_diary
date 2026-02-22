@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Gym Diary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#08090a; --line:rgba(255,255,255,.1); --text:#f2f5ec; --muted:#8a9085; --accent:#e8ff00; --surface:rgba(16,19,21,.84); }
+    :root[data-theme="light"] { --bg:#f4f6ef; --line:rgba(17,19,17,.15); --text:#121512; --muted:#4f584c; --surface:rgba(255,255,255,.92); }
+    body { min-height:100vh; color:var(--text); font-family:'IBM Plex Mono',monospace; background:linear-gradient(180deg,var(--bg),color-mix(in srgb, var(--bg), #101315 30%)); padding-bottom:calc(140px + env(safe-area-inset-bottom)); }
+    nav { position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); backdrop-filter:blur(12px); background:color-mix(in srgb, var(--bg), transparent 20%); }
+    .nav-logo { text-decoration:none; color:var(--text); font-family:'Bebas Neue',sans-serif; letter-spacing:3px; font-size:24px; }
+    .nav-logo span { color:var(--accent); }
+    .nav-btn { border:1px solid var(--line); background:transparent; color:var(--text); border-radius:999px; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:8px 13px; cursor:pointer; }
+    main { width:min(100%,760px); margin:0 auto; padding:18px 16px; display:grid; gap:14px; }
+    .panel { border:1px solid var(--line); border-radius:14px; background:var(--surface); padding:16px; }
+    .title { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:1px; line-height:.95; }
+    .sub { margin-top:6px; font-size:11px; color:var(--muted); letter-spacing:1px; }
+    .row { display:grid; gap:10px; margin-top:10px; }
+    label { font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; display:block; margin-bottom:5px; }
+    input, select { width:100%; background:rgba(255,255,255,.03); border:1px solid var(--line); color:var(--text); border-radius:10px; padding:10px; font-family:inherit; font-size:13px; }
+    .swatches { display:flex; gap:8px; }
+    .swatch { width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.25); cursor:pointer; }
+    .swatch.active { border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.2); }
+    .btn { border:none; border-radius:11px; background:linear-gradient(180deg, color-mix(in srgb, var(--accent), #fff 22%), var(--accent)); color:#0f110f; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; font-size:20px; padding:10px; cursor:pointer; }
+    .list a { display:flex; justify-content:space-between; align-items:center; color:var(--text); text-decoration:none; border:1px solid var(--line); border-radius:10px; padding:11px; font-size:12px; margin-bottom:8px; }
+    .footer { border:1px solid var(--line); border-radius:14px; background:var(--surface); padding:12px; font-size:11px; color:var(--muted); }
+    .footer a { color:var(--accent); text-decoration:none; }
+    .bottom-nav { position:fixed; top:auto; left:50%; transform:translateX(-50%); bottom:calc(10px + env(safe-area-inset-bottom)); width:min(100% - 16px,500px); z-index:30; background:color-mix(in srgb, var(--surface), #0e1011 25%); border:1px solid var(--line); border-radius:18px; display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:8px; }
+    .bottom-nav a { text-decoration:none; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border-radius:11px; color:var(--muted); padding:7px 4px; font-size:9px; letter-spacing:1.3px; text-transform:uppercase; }
+    .bottom-nav a.active { background:color-mix(in srgb, var(--accent), transparent 84%); color:var(--accent); box-shadow:0 0 0 1px color-mix(in srgb, var(--accent), transparent 70%) inset; }
+    .nav-ico { font-size:13px; }
+    .toast { position:fixed; left:50%; bottom:calc(88px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px); border-radius:12px; padding:10px 14px; background:#2effa5; color:#08110c; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1.5px; opacity:0; pointer-events:none; transition:all .25s; z-index:60; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="dashboard.html" class="nav-logo">GYM<span>.</span>DIARY</a>
+    <button class="nav-btn" onclick="Auth.logout()">Logout</button>
+  </nav>
+
+  <main>
+    <section class="panel">
+      <div class="title">Settings</div>
+      <p class="sub">Theme, readability, and app behavior controls.</p>
+      <div class="row">
+        <div>
+          <label>Theme Mode</label>
+          <select id="theme-select">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+        <div>
+          <label>Accent Color</label>
+          <div class="swatches" id="accent-swatches"></div>
+        </div>
+        <div>
+          <label>Card Curvature</label>
+          <input id="radius-range" type="range" min="8" max="24" step="1" />
+        </div>
+        <div>
+          <label>Layout Density</label>
+          <select id="compact-select">
+            <option value="false">Comfortable</option>
+            <option value="true">Compact</option>
+          </select>
+        </div>
+        <button class="btn" onclick="saveSettings()">Apply Settings</button>
+      </div>
+    </section>
+
+    <section class="panel list">
+      <a href="about.html"><span>About App</span><span>›</span></a>
+      <a href="terms.html"><span>Terms & Conditions</span><span>›</span></a>
+      <a href="privacy.html"><span>Privacy Policy</span><span>›</span></a>
+      <a href="profile.html"><span>Back To Profile</span><span>›</span></a>
+    </section>
+
+    <section class="footer">
+      Version: <strong>Gym Diary v1.0.0</strong><br/>
+      Build Type: Local MVP<br/>
+      <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-ico">🏋</span><span>Today</span></a>
+    <a href="splits.html"><span class="nav-ico">📋</span><span>Splits</span></a>
+    <a href="analytics.html"><span class="nav-ico">📈</span><span>Analytics</span></a>
+    <a href="profile.html" class="active"><span class="nav-ico">👤</span><span>Profile</span></a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/static/api.js"></script>
+  <script>
+    requireAuth();
+    const ACCENTS = ["#e8ff00", "#ffcc66", "#67e8f9", "#a7f3d0", "#fda4af"];
+    let currentAccent = "#e8ff00";
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    function renderAccentSwatches(selected) {
+      const wrap = document.getElementById("accent-swatches");
+      wrap.innerHTML = ACCENTS.map(c => `<button class="swatch ${c===selected?"active":""}" style="background:${c}" onclick="pickAccent('${c}')"></button>`).join("");
+    }
+
+    function pickAccent(c) { currentAccent = c; renderAccentSwatches(c); }
+
+    function loadSettingsUi() {
+      const s = AppSettings.load();
+      currentAccent = s.accent || "#e8ff00";
+      document.getElementById("theme-select").value = s.theme || "dark";
+      document.getElementById("radius-range").value = s.radius || 14;
+      document.getElementById("compact-select").value = String(!!s.compact);
+      renderAccentSwatches(currentAccent);
+    }
+
+    function saveSettings() {
+      AppSettings.save({
+        theme: document.getElementById("theme-select").value,
+        accent: currentAccent,
+        radius: Number(document.getElementById("radius-range").value),
+        compact: document.getElementById("compact-select").value === "true",
+      });
+      showToast("Settings applied");
+    }
+
+    loadSettingsUi();
+  </script>
+</body>
+</html>

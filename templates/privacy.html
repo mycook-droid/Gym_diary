@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Gym Diary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#08090a;--line:rgba(255,255,255,.1);--text:#f2f5ec;--muted:#8a9085;--accent:#e8ff00;--surface:rgba(16,19,21,.84)}
+    :root[data-theme="light"]{--bg:#f4f6ef;--line:rgba(17,19,17,.15);--text:#121512;--muted:#4f584c;--surface:rgba(255,255,255,.92)}
+    body{min-height:100vh;color:var(--text);font-family:'IBM Plex Mono',monospace;background:linear-gradient(180deg,var(--bg),color-mix(in srgb,var(--bg),#101315 30%));padding-bottom:calc(140px + env(safe-area-inset-bottom))}
+    nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg),transparent 20%)}
+    .nav-logo{text-decoration:none;color:var(--text);font-family:'Bebas Neue',sans-serif;letter-spacing:3px;font-size:24px}.nav-logo span{color:var(--accent)}
+    .nav-btn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:8px 13px;cursor:pointer}
+    main{width:min(100%,760px);margin:0 auto;padding:18px 16px;display:grid;gap:14px}
+    .panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px}
+    .title{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:.95;letter-spacing:1px}
+    .text{margin-top:10px;font-size:12px;line-height:1.8;color:var(--text)}
+    .muted{color:var(--muted)}
+    .legal-footer{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px;font-size:11px;color:var(--muted)}
+    .legal-footer a{color:var(--accent);text-decoration:none}
+    .bottom-nav{position:fixed;top:auto;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom));width:min(100% - 16px,500px);z-index:30;background:color-mix(in srgb,var(--surface),#0e1011 25%);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px}
+    .bottom-nav a{text-decoration:none;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:11px;color:var(--muted);padding:7px 4px;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}
+    .bottom-nav a.active{background:color-mix(in srgb,var(--accent),transparent 84%);color:var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent),transparent 70%) inset}
+    .nav-ico{font-size:13px}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="dashboard.html" class="nav-logo">GYM<span>.</span>DIARY</a>
+    <button class="nav-btn" onclick="Auth.logout()">Logout</button>
+  </nav>
+
+  <main>
+    <section class="panel">
+      <div class="title">Privacy Policy</div>
+      <div class="text">
+        <strong>Effective Date:</strong> February 23, 2026<br/><br/>
+        Gym Diary stores workout and account data needed for app functionality, including your profile, splits, and workout logs.
+        Data is used only to operate the product experience and is not sold for advertising.
+      </div>
+    </section>
+
+    <section class="panel text muted">
+      <strong style="color:var(--text)">Data We Store</strong><br/>
+      1. Account fields: username, email, optional profile photo URL, optional motivation note.<br/>
+      2. Workout data: split templates, exercises, sets, reps, weight, session dates.<br/>
+      3. Local preferences: theme and UI settings in your browser local storage.
+    </section>
+
+    <section class="panel text muted">
+      <strong style="color:var(--text)">Your Controls</strong><br/>
+      You can edit profile data inside the app. For account/data concerns, use developer contact links in About.
+    </section>
+
+    <section class="legal-footer">
+      <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-ico">🏋</span><span>Today</span></a>
+    <a href="splits.html"><span class="nav-ico">📋</span><span>Splits</span></a>
+    <a href="analytics.html"><span class="nav-ico">📈</span><span>Analytics</span></a>
+    <a href="profile.html" class="active"><span class="nav-ico">👤</span><span>Profile</span></a>
+  </nav>
+
+  <script src="/static/api.js"></script>
+  <script>requireAuth();</script>
+</body>
+</html>
