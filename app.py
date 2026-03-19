@@ -17,7 +17,10 @@ def create_app():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///app.db")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "super-secret-key")
+    jwt_secret = os.getenv("JWT_SECRET_KEY")
+    if not jwt_secret:
+        raise ValueError("JWT_SECRET_KEY not set in environment variables")
+    app.config["JWT_SECRET_KEY"] = jwt_secret
 
     CORS(
         app,
@@ -101,4 +104,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         ensure_schema_updates()
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_ENV") == "development")
