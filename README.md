@@ -19,6 +19,15 @@ This flat structure is intentional right now so existing relative links and scri
 
 Then open frontend using your local static server (for example VS Code Live Server).
 
+### API base and CORS configuration
+
+- Frontend defaults to same-origin API calls (`/api`) in production.
+- Optional frontend override:
+  - set `window.API_BASE` before loading `/static/api.js` (example: `http://127.0.0.1:5000/api` for local-only testing).
+- Backend CORS origins are read from `CORS_ORIGINS` (comma-separated).
+  - If not set, localhost development origins are used.
+- Database tables are initialized at app startup (including Gunicorn/Render) via `db.create_all()`.
+
 ## Publish Readiness Checklist
 
 1. Keep `.env` out of Git.

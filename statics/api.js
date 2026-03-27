@@ -1,5 +1,5 @@
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const API_BASE = window.API_BASE || "http://127.0.0.1:5000/api";
+const API_BASE = window.API_BASE || "/api";
 
 // ─── TOKEN HELPERS ────────────────────────────────────────────────────────────
 const getToken = () => localStorage.getItem("token");
