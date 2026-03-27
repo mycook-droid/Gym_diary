@@ -104,11 +104,12 @@ def create_app():
     def privacy_page():
         return render_template("privacy.html")
 
+    with app.app_context():
+        db.create_all()
+        ensure_schema_updates()
+
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    with app.app_context():
-        db.create_all()
-        ensure_schema_updates()
     app.run(debug=os.getenv("FLASK_ENV") == "development")

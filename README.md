@@ -26,6 +26,7 @@ Then open frontend using your local static server (for example VS Code Live Serv
   - set `window.API_BASE` before loading `/static/api.js` (example: `http://127.0.0.1:5000/api` for local-only testing).
 - Backend CORS origins are read from `CORS_ORIGINS` (comma-separated).
   - If not set, localhost development origins are used.
+- Database tables are initialized at app startup (including Gunicorn/Render) via `db.create_all()`.
 
 ## Publish Readiness Checklist
 
