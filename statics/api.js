@@ -46,6 +46,32 @@ const AppSettings = {
 // Apply saved settings immediately when api.js loads.
 AppSettings.apply();
 
+function applyMobileInteractionFixes() {
+  if (document.getElementById("mobile-interaction-fixes")) return;
+
+  const style = document.createElement("style");
+  style.id = "mobile-interaction-fixes";
+  style.textContent = `
+    .modal-overlay { visibility: hidden; }
+    .modal-overlay.open { visibility: visible; }
+    .modal-overlay .modal { pointer-events: none; }
+    .modal-overlay.open .modal { pointer-events: auto; }
+
+    @media (hover: none) and (pointer: coarse) {
+      nav,
+      .bottom-nav,
+      .modal-overlay {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+applyMobileInteractionFixes();
+
 // If no token and not on index page, redirect to login
 function requireAuth() {
   const path = window.location.pathname || "/";
