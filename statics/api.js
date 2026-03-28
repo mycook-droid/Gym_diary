@@ -1,5 +1,5 @@
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const API_BASE = window.API_BASE || "http://127.0.0.1:5000/api";
+const API_BASE = window.API_BASE || "/api";
 
 // ─── TOKEN HELPERS ────────────────────────────────────────────────────────────
 const getToken = () => localStorage.getItem("token");
@@ -45,6 +45,32 @@ const AppSettings = {
 
 // Apply saved settings immediately when api.js loads.
 AppSettings.apply();
+
+function applyMobileInteractionFixes() {
+  if (document.getElementById("mobile-interaction-fixes")) return;
+
+  const style = document.createElement("style");
+  style.id = "mobile-interaction-fixes";
+  style.textContent = `
+    .modal-overlay { visibility: hidden; }
+    .modal-overlay.open { visibility: visible; }
+    .modal-overlay .modal { pointer-events: none; }
+    .modal-overlay.open .modal { pointer-events: auto; }
+
+    @media (hover: none) and (pointer: coarse) {
+      nav,
+      .bottom-nav,
+      .modal-overlay {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+applyMobileInteractionFixes();
 
 // If no token and not on index page, redirect to login
 function requireAuth() {

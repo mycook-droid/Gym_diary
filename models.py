@@ -40,6 +40,9 @@ class User(db.Model):
 
 def ensure_schema_updates():
     """Lightweight dev migration for newly added user profile columns."""
+    if db.engine.dialect.name != "sqlite":
+        return
+
     table_info = db.session.execute(text("PRAGMA table_info(users)")).fetchall()
     columns = {row[1] for row in table_info}
 
