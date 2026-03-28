@@ -34,11 +34,11 @@
     .nav-btn { border: 1px solid var(--border); background: var(--surface); color: var(--muted); border-radius: 10px; padding: 7px 13px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.2s; text-decoration: none; cursor: pointer; }
     .nav-btn:hover { border-color: var(--border-hi); color: var(--accent); }
     main { position: relative; z-index: 1; width: min(100%, 600px); margin: 0 auto; padding: 20px 16px 24px; display: grid; gap: 16px; }
-    main > section, main > div.card { animation: cardIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
-    main > section:nth-child(1), main > div.card:nth-child(1) { animation-delay: 0s; }
-    main > section:nth-child(2), main > div.card:nth-child(2) { animation-delay: 0.07s; }
-    main > section:nth-child(3), main > div.card:nth-child(3) { animation-delay: 0.14s; }
-    main > section:nth-child(4), main > div.card:nth-child(4) { animation-delay: 0.21s; }
+    main > section, main > div { animation: cardIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+    main > section:nth-child(1), main > div:nth-child(1) { animation-delay: 0s; }
+    main > section:nth-child(2), main > div:nth-child(2) { animation-delay: 0.07s; }
+    main > section:nth-child(3), main > div:nth-child(3) { animation-delay: 0.14s; }
+    main > section:nth-child(4), main > div:nth-child(4) { animation-delay: 0.21s; }
     .card, .panel, .section, .hero, #workout-content, .footer, .legal-footer, .app-footer, .rest-card, .no-split, .item, .stat, .line-wrap, .split-card, .preset-card, .empty, .builder-note, .prev-session, .list div, .list-links a { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; transition: border-color 0.2s, transform 0.18s; }
     .card:hover, .panel:hover, .section:hover, .hero:hover, #workout-content:hover, .footer:hover, .legal-footer:hover, .app-footer:hover, .rest-card:hover, .no-split:hover, .item:hover, .stat:hover, .line-wrap:hover, .split-card:hover, .preset-card:hover, .empty:hover, .builder-note:hover, .prev-session:hover, .list div:hover, .list-links a:hover { border-color: var(--border-hi); transform: translateY(-2px); }
     .title, .hero-title, .name, .modal-title, .preset-name, .split-name, .ex-name, .stat-value, .rest-title, h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
