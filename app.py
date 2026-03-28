@@ -7,6 +7,18 @@ import os
 
 load_dotenv()
 
+def parse_cors_origins():
+    raw = os.getenv("CORS_ORIGINS", "")
+    parsed = [origin.strip() for origin in raw.split(",") if origin.strip()]
+    if parsed:
+        return parsed
+    return [
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+    ]
+
 def create_app():
     app = Flask(
         __name__,
@@ -26,12 +38,7 @@ def create_app():
         app,
         resources={
             r"/api/*": {
-                "origins": [
-                    "http://127.0.0.1:5500",
-                    "http://localhost:5500",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:3000",
-                ]
+                "origins": parse_cors_origins()
             }
         },
         supports_credentials=False,
@@ -97,11 +104,12 @@ def create_app():
     def privacy_page():
         return render_template("privacy.html")
 
+    with app.app_context():
+        db.create_all()
+        ensure_schema_updates()
+
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    with app.app_context():
-        db.create_all()
-        ensure_schema_updates()
     app.run(debug=os.getenv("FLASK_ENV") == "development")
