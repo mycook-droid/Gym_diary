@@ -69,6 +69,8 @@
     @media (min-width: 720px) { main { padding: 24px 20px 28px; } }
     .panel, .footer { padding: 20px; } .profile-head { display: flex; gap: 16px; align-items: center; } .photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); background: var(--surface-2); } .name { font-size: 42px; line-height: .9; } .sub { margin-top: 6px; color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; } .row { margin-top: 16px; display: grid; gap: 12px; } .item { padding: 14px; } .k { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); } .v { margin-top: 6px; line-height: 1.7; } .actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; } .list-links { display: grid; gap: 10px; } .list-links a { padding: 16px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; } .footer { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; } .footer a { color: var(--accent); text-decoration: none; } .modal-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; padding: 0; backdrop-filter: blur(8px); } .modal-overlay.open { display: flex; } .modal { width: min(100%, 600px); background: #0f1113; border: 1px solid var(--border); border-top-left-radius: 28px; border-top-right-radius: 28px; border-bottom: none; padding: 18px 20px calc(32px + env(safe-area-inset-bottom)); max-height: 90vh; overflow: auto; } .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; } .modal-title { font-size: 30px; } .form { display: grid; gap: 12px; } textarea { min-height: 110px; resize: vertical; } .u-status { min-height: 16px; font-size: 11px; } .u-status.ok { color: var(--green); } .u-status.bad { color: var(--red); }
   </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
   <nav>
@@ -300,6 +302,13 @@
     }
 
     loadProfile();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+    }
   </script>
 </body>
 </html>

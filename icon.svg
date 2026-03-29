@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="Gym Diary icon">
+  <rect width="192" height="192" fill="#0a0a0a"/>
+  <rect x="18" y="18" width="156" height="156" fill="#232819"/>
+  <rect x="28" y="28" width="136" height="136" fill="#0a0a0a"/>
+  <path d="M42 42h108v12H54v84h96v12H42z" fill="#d6f500"/>
+  <path d="M102 92h48v12h-36v34h36v12h-48z" fill="#d6f500"/>
+</svg>

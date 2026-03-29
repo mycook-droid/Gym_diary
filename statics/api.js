@@ -241,4 +241,8 @@ const Logs = {
   async deleteLog(logId) {
     return apiFetch(`/logs/${logId}`, { method: "DELETE" });
   },
+
+  async getAnalytics() {
+    return apiFetch("/logs/analytics");
+  },
 };
