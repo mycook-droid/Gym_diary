@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -103,6 +103,19 @@ def create_app():
     @app.route("/privacy.html")
     def privacy_page():
         return render_template("privacy.html")
+
+    # PWA assets at root so Chrome can discover install metadata and SW scope.
+    @app.route("/manifest.json")
+    def manifest_file():
+        return send_from_directory(".", "manifest.json", mimetype="application/manifest+json")
+
+    @app.route("/sw.js")
+    def service_worker_file():
+        return send_from_directory(".", "sw.js", mimetype="application/javascript")
+
+    @app.route("/icon.svg")
+    def app_icon_file():
+        return send_from_directory(".", "icon.svg", mimetype="image/svg+xml")
 
     with app.app_context():
         db.create_all()

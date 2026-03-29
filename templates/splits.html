@@ -69,6 +69,8 @@
     .panel, .footer, .legal-footer { padding: 20px; } .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 15vw, 68px); letter-spacing: 2px; line-height: .9; } .sub { margin-top: 8px; color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; } .text { margin-top: 14px; line-height: 1.8; color: var(--text); font-size: 15px; } .list { margin-top: 16px; display: grid; gap: 10px; } .list div { padding: 14px; color: var(--text); } .list strong, .footer a, .text a, .legal-footer a { color: var(--accent); } .muted { color: var(--muted); } .legal-footer, .footer { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; }
     .hero,.section,.app-footer{padding:20px}.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,16vw,80px);letter-spacing:2px;line-height:.9}.hero-sub,.section-title,.preset-key,.day-name,.builder-note,.empty{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}.split-card,.preset-card{padding:16px;margin-bottom:10px}.split-card.active{border-color:var(--border-hi)}.split-name{font-size:18px}.split-badge{display:inline-block;margin-left:8px;padding:4px 8px;border-radius:999px;font-size:9px;letter-spacing:1px}.split-badge.active-badge{background:var(--accent);color:#080a05}.split-badge.preset-badge{border:1px solid var(--border);color:var(--muted)}.split-actions{display:flex;gap:8px;align-items:center}.btn-delete{border:1px solid rgba(255,77,77,.22);background:rgba(255,77,77,.08);color:#ffb5b5;width:34px;height:34px;border-radius:10px;cursor:pointer}.preset-grid,.days-grid{display:grid;gap:12px}.preset-name{font-size:28px}.btn-use{margin-top:14px;display:inline-block;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase}.builder-form{display:grid;gap:14px}.day-row{display:grid;grid-template-columns:minmax(88px,1fr) 1fr;gap:10px;align-items:center}.inline-check{display:flex;align-items:center;gap:10px}.inline-check input{width:18px;height:18px;accent-color:var(--accent)}.inline-check span{font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:14px;text-transform:none;letter-spacing:0}.builder-note,.empty{text-align:center}.app-footer{width:min(100%,600px);margin:0 auto;text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:transparent;border:none}.app-footer a{color:var(--accent);text-decoration:none}
   </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
   <nav>
@@ -350,6 +352,13 @@
     }
 
     init();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+    }
   </script>
 </body>
 </html>

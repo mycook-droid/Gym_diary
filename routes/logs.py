@@ -1,9 +1,76 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, WorkoutLog, Exercise, WorkoutSplit, SplitDay
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+from collections import defaultdict
 
 logs_bp = Blueprint("logs", __name__)
+
+TRACKED_MUSCLES = ["chest", "back", "legs", "shoulders", "biceps", "triceps"]
+
+EXERCISE_MUSCLE_MAP = {
+    "bench press": {"chest": 0.6, "shoulders": 0.25, "triceps": 0.15},
+    "incline dumbbell press": {"chest": 0.55, "shoulders": 0.3, "triceps": 0.15},
+    "incline bench press": {"chest": 0.55, "shoulders": 0.3, "triceps": 0.15},
+    "cable fly": {"chest": 0.85, "shoulders": 0.1, "triceps": 0.05},
+    "overhead press": {"shoulders": 0.55, "triceps": 0.3, "chest": 0.15},
+    "lateral raises": {"shoulders": 1.0},
+    "face pulls": {"shoulders": 0.8, "back": 0.2},
+    "tricep pushdown": {"triceps": 1.0},
+    "overhead tricep extension": {"triceps": 1.0},
+    "skull crushers": {"triceps": 1.0},
+    "deadlift": {"back": 0.4, "legs": 0.4, "shoulders": 0.1, "biceps": 0.1},
+    "barbell row": {"back": 0.75, "biceps": 0.25},
+    "seated cable row": {"back": 0.75, "biceps": 0.25},
+    "lat pulldown": {"back": 0.75, "biceps": 0.25},
+    "pull ups": {"back": 0.7, "biceps": 0.3},
+    "barbell curl": {"biceps": 1.0},
+    "hammer curl": {"biceps": 1.0},
+    "incline dumbbell curl": {"biceps": 1.0},
+    "bicep curl": {"biceps": 1.0},
+    "squat": {"legs": 0.9, "back": 0.1},
+    "romanian deadlift": {"legs": 0.75, "back": 0.25},
+    "leg press": {"legs": 1.0},
+    "leg curl": {"legs": 1.0},
+    "bulgarian split squat": {"legs": 1.0},
+}
+
+MUSCLE_GROUP_FALLBACK = {
+    "chest": {"chest": 1.0},
+    "back": {"back": 1.0},
+    "rear delts": {"shoulders": 1.0},
+    "shoulders": {"shoulders": 1.0},
+    "triceps": {"triceps": 1.0},
+    "biceps": {"biceps": 1.0},
+    "quads": {"legs": 1.0},
+    "hamstrings": {"legs": 1.0},
+    "calves": {"legs": 1.0},
+    "legs": {"legs": 1.0},
+}
+
+
+def intensity_factor_for_reps(reps):
+    reps = int(reps or 0)
+    if reps <= 5:
+        return 1.0
+    if reps <= 10:
+        return 0.85
+    if reps <= 15:
+        return 0.7
+    return 0.5
+
+
+def get_distribution_for_exercise(exercise_name, muscle_group):
+    key = (exercise_name or "").strip().lower()
+    if key in EXERCISE_MUSCLE_MAP:
+        return EXERCISE_MUSCLE_MAP[key]
+
+    for known_name, distribution in EXERCISE_MUSCLE_MAP.items():
+        if known_name in key:
+            return distribution
+
+    group_key = (muscle_group or "").strip().lower()
+    return MUSCLE_GROUP_FALLBACK.get(group_key, {})
 
 
 # ─── LOG A WORKOUT SET ────────────────────────────────────────────────────────
@@ -249,3 +316,114 @@ def edit_log(log_id):
     db.session.commit()
 
     return jsonify({"message": "Log updated", "log": log.to_dict()}), 200
+
+
+@logs_bp.route("/analytics", methods=["GET"])
+@jwt_required()
+def analytics():
+    user_id = int(get_jwt_identity())
+    today = date.today()
+    dates_14 = [today - timedelta(days=i) for i in range(13, -1, -1)]
+    dates_7 = dates_14[-7:]
+    date_keys_14 = [d.isoformat() for d in dates_14]
+    date_keys_7 = [d.isoformat() for d in dates_7]
+
+    all_logs = db.session.query(WorkoutLog).join(Exercise).filter(
+        WorkoutLog.user_id == user_id
+    ).all()
+
+    exercise_max_score = defaultdict(float)
+    for log in all_logs:
+        raw_score = (float(log.weight or 0) * float(log.reps or 0)) * intensity_factor_for_reps(log.reps)
+        exercise_max_score[log.exercise_id] = max(exercise_max_score[log.exercise_id], raw_score)
+
+    logs_14 = [log for log in all_logs if log.date in set(dates_14)]
+
+    day_total_raw = defaultdict(float)
+    day_total_sets = defaultdict(int)
+    muscle_daily_raw = {muscle: defaultdict(float) for muscle in TRACKED_MUSCLES}
+
+    for log in logs_14:
+        raw_score = (float(log.weight or 0) * float(log.reps or 0)) * intensity_factor_for_reps(log.reps)
+        max_for_exercise = exercise_max_score.get(log.exercise_id, 0.0)
+        normalizer = max(max_for_exercise, raw_score, 1.0)
+        normalized_score = raw_score / normalizer
+        distribution = get_distribution_for_exercise(log.exercise.name, log.exercise.muscle_group)
+
+        day_key = log.date.isoformat()
+        day_total_raw[day_key] += normalized_score
+        day_total_sets[day_key] += 1
+
+        for muscle, share in distribution.items():
+            if muscle in muscle_daily_raw:
+                muscle_daily_raw[muscle][day_key] += normalized_score * float(share)
+
+    def apply_decay(series_by_day):
+        values = []
+        previous = 0.0
+        for day_key in date_keys_14:
+            current = series_by_day.get(day_key, 0.0)
+            if current > 0:
+                previous = current
+            else:
+                previous *= 0.98
+            values.append(previous)
+        return values
+
+    def rolling_avg(values, window=7):
+        result = []
+        for idx in range(len(values)):
+            start = max(0, idx - window + 1)
+            segment = values[start:idx + 1]
+            result.append(sum(segment) / max(len(segment), 1))
+        return result
+
+    def pct_growth(prev, curr):
+        if prev <= 0 and curr <= 0:
+            return 0.0
+        if prev <= 0:
+            return 100.0
+        return ((curr - prev) / prev) * 100.0
+
+    muscles_payload = {}
+    latest_week_avg_total = 0.0
+    prev_week_avg_total = 0.0
+
+    for muscle in TRACKED_MUSCLES:
+        decayed = apply_decay(muscle_daily_raw[muscle])
+        smoothed = rolling_avg(decayed, window=7)
+        prev_week_avg = sum(smoothed[:7]) / 7 if smoothed[:7] else 0.0
+        current_week_avg = sum(smoothed[7:14]) / 7 if smoothed[7:14] else 0.0
+        growth = pct_growth(prev_week_avg, current_week_avg)
+
+        latest_week_avg_total += current_week_avg
+        prev_week_avg_total += prev_week_avg
+
+        muscles_payload[muscle] = {
+            "growth": round(growth, 1),
+            "trend": [round(v, 4) for v in smoothed],
+            "week_delta": round(current_week_avg - prev_week_avg, 4),
+        }
+
+    weekly_raw_with_decay = apply_decay(day_total_raw)
+    weekly_smoothed = rolling_avg(weekly_raw_with_decay, window=7)
+    weekly_load = [
+        {"date": day_key, "score": round(weekly_smoothed[idx], 4)}
+        for idx, day_key in enumerate(date_keys_7, start=7)
+    ]
+
+    training_days = sum(1 for day_key in date_keys_14 if day_total_sets[day_key] > 0)
+    total_sets = sum(day_total_sets[day_key] for day_key in date_keys_14)
+    consistency_score = (training_days / 14) * 100
+    strength_trend = pct_growth(prev_week_avg_total, latest_week_avg_total)
+
+    return jsonify({
+        "snapshot": {
+            "training_days": training_days,
+            "total_sets": total_sets,
+            "consistency_score": round(consistency_score, 1),
+            "strength_trend": round(strength_trend, 1),
+        },
+        "muscles": muscles_payload,
+        "weekly_load": weekly_load,
+    }), 200

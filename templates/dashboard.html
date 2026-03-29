@@ -69,6 +69,8 @@
     .panel, .footer, .legal-footer { padding: 20px; } .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 15vw, 68px); letter-spacing: 2px; line-height: .9; } .sub { margin-top: 8px; color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; } .text { margin-top: 14px; line-height: 1.8; color: var(--text); font-size: 15px; } .list { margin-top: 16px; display: grid; gap: 10px; } .list div { padding: 14px; color: var(--text); } .list strong, .footer a, .text a, .legal-footer a { color: var(--accent); } .muted { color: var(--muted); } .legal-footer, .footer { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; }
     .date-header,#workout-content,.app-footer{padding:20px}.date-header{border-radius:24px}.date-day{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,15vw,76px);letter-spacing:2px;line-height:.9}.date-label{margin-top:6px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}.date-split{margin-top:4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}.section-title{margin-bottom:12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}.exercise-list{display:flex;flex-direction:column;gap:10px}.ex-left{flex:1;min-width:0}.ex-name{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ex-meta{margin-top:4px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}.exercise-item.done{border-color:rgba(0,232,122,.4)}.ex-sets-done{color:var(--green);font-family:'Space Mono',monospace;font-size:11px}.ex-sets-todo{color:var(--muted);font-family:'Space Mono',monospace;font-size:11px}.rest-card,.no-split{text-align:center;padding:28px 18px}.modal-overlay{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);transition:opacity .25s}.modal-overlay.open{opacity:1;pointer-events:all}.modal{width:min(100%,600px);background:#0f1113;border:1px solid var(--border);border-top-left-radius:28px;border-top-right-radius:28px;border-bottom:none;padding:8px 20px calc(32px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1)}.modal-overlay.open .modal{transform:translateY(0)}.modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.modal-title{font-size:32px}.modal-muscle{margin-top:6px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}.sets-container{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}.set-row{display:grid;grid-template-columns:34px minmax(0,1fr) minmax(0,1fr) 34px;gap:8px;align-items:center}.set-num,.set-input-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:center}.set-input{text-align:center}.set-delete{border:1px solid rgba(255,77,77,.22);background:rgba(255,77,77,.08);color:#ffb5b5;width:34px;height:34px;border-radius:10px;cursor:pointer}.app-footer{width:min(100%,600px);margin:0 auto;text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:transparent;border:none}.app-footer a{color:var(--accent);text-decoration:none}
   </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
   <nav>
@@ -341,6 +343,13 @@
     }
 
     init();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+    }
   </script>
 </body>
 </html>

@@ -69,6 +69,8 @@
     .panel, .footer, .legal-footer { padding: 20px; } .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 15vw, 68px); letter-spacing: 2px; line-height: .9; } .sub { margin-top: 8px; color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; } .text { margin-top: 14px; line-height: 1.8; color: var(--text); font-size: 15px; } .list { margin-top: 16px; display: grid; gap: 10px; } .list div { padding: 14px; color: var(--text); } .list strong, .footer a, .text a, .legal-footer a { color: var(--accent); } .muted { color: var(--muted); } .legal-footer, .footer { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; }
     .panel,.legal-footer{padding:20px}.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,15vw,68px);letter-spacing:2px;line-height:.9}.text{margin-top:14px;line-height:1.8;font-size:15px;color:var(--text)}.muted{color:var(--muted)}.legal-footer{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}.legal-footer a{color:var(--accent);text-decoration:none}
   </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
   <nav>
@@ -124,5 +126,12 @@
 
   <script src="/static/api.js"></script>
   <script>requireAuth();</script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+    }
+  </script>
 </body>
 </html>
