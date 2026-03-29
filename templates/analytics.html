@@ -6,68 +6,56 @@
   <title>Analytics — Gym Diary</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-  --bg:        #070809;
-  --bg-2:      #0f1113;
-  --surface:   rgba(255,255,255,0.04);
-  --surface-2: rgba(255,255,255,0.07);
-  --border:    rgba(255,255,255,0.08);
-  --border-hi: rgba(232,255,0,0.35);
-  --text:      #eef1e8;
-  --muted:     #6b7267;
-  --accent:    #d6f500;
-  --accent-2:  rgba(214,245,0,0.12);
-  --green:     #00e87a;
-  --red:       #ff4d4d;
-}
-
+      --bg:#070809; --surface:rgba(255,255,255,.04); --surface-2:rgba(255,255,255,.07); --border:rgba(255,255,255,.08);
+      --border-hi:rgba(232,255,0,.35); --text:#eef1e8; --muted:#6b7267; --accent:#d6f500; --accent-2:rgba(214,245,0,.12);
+      --green:#00e87a; --red:#ff4d4d;
+    }
     html { color-scheme: dark; }
-    body { min-height: 100vh; color: var(--text); font-family: 'Space Grotesk', sans-serif; background: var(--bg); padding-bottom: calc(80px + env(safe-area-inset-bottom)); position: relative; }
-    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.6; }
-    a { color: inherit; }
-    nav { position: sticky; top: 0; z-index: 50; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; background: rgba(7,8,9,0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
-    .nav-logo { text-decoration: none; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; line-height: 1; }
-    .nav-logo span { color: var(--accent); }
-    .nav-right, .nav-actions { display: flex; gap: 10px; align-items: center; }
-    .nav-btn { border: 1px solid var(--border); background: var(--surface); color: var(--muted); border-radius: 10px; padding: 7px 13px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.2s; text-decoration: none; cursor: pointer; }
-    .nav-btn:hover { border-color: var(--border-hi); color: var(--accent); }
-    main { position: relative; z-index: 1; width: min(100%, 600px); margin: 0 auto; padding: 20px 16px 24px; display: grid; gap: 16px; }
-    main > section, main > div { animation: cardIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
-    main > section:nth-child(1), main > div:nth-child(1) { animation-delay: 0s; }
-    main > section:nth-child(2), main > div:nth-child(2) { animation-delay: 0.07s; }
-    main > section:nth-child(3), main > div:nth-child(3) { animation-delay: 0.14s; }
-    main > section:nth-child(4), main > div:nth-child(4) { animation-delay: 0.21s; }
-    .card, .panel, .section, .hero, #workout-content, .footer, .legal-footer, .app-footer, .rest-card, .no-split, .item, .stat, .line-wrap, .split-card, .preset-card, .empty, .builder-note, .prev-session, .list div, .list-links a { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; transition: border-color 0.2s, transform 0.18s; }
-    .card:hover, .panel:hover, .section:hover, .hero:hover, #workout-content:hover, .footer:hover, .legal-footer:hover, .app-footer:hover, .rest-card:hover, .no-split:hover, .item:hover, .stat:hover, .line-wrap:hover, .split-card:hover, .preset-card:hover, .empty:hover, .builder-note:hover, .prev-session:hover, .list div:hover, .list-links a:hover { border-color: var(--border-hi); transform: translateY(-2px); }
-    .title, .hero-title, .name, .modal-title, .preset-name, .split-name, .ex-name, .stat-value, .rest-title, h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
-    .logo, .date-day { font-family: 'Bebas Neue', sans-serif; }
-    .sub, .section-title, .k, .tagline, .date-label, .date-split, .hero-sub, .stat-label, .bar-day, .bar-val, .modal-muscle, .ex-meta, .set-num, .set-input-label, .split-badge, .pitch-label, .u-status, .legal-footer, .app-footer, .day-name { font-family: 'Space Mono', monospace; }
-    label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 7px; }
-    input, select, textarea { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 15px; padding: 13px 14px; width: 100%; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-    input:focus, select:focus, textarea:focus { border-color: var(--border-hi); box-shadow: 0 0 0 3px rgba(214,245,0,0.08); }
-    .btn, .btn-yellow, .builder-btn, .save-btn, .btn-save { background: var(--accent); color: #080a05; border: none; border-radius: 14px; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; padding: 14px; width: 100%; cursor: pointer; transition: filter 0.2s, transform 0.12s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-    .btn:hover, .btn-yellow:hover, .builder-btn:hover, .save-btn:hover, .btn-save:hover { filter: brightness(1.08); }
-    .btn:active, .btn-yellow:active, .builder-btn:active, .save-btn:active, .btn-save:active { transform: scale(0.97); }
-    .btn:disabled, .builder-btn:disabled, .save-btn:disabled, .btn-save:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn.primary, .btn-activate, .btn-add-set, .close-btn, .modal-close { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 10px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; padding: 9px 14px; cursor: pointer; transition: all 0.2s; width: auto; }
-    .btn.primary:hover, .btn-activate:hover, .btn-add-set:hover, .close-btn:hover, .modal-close:hover { border-color: var(--border-hi); color: var(--text); }
-    .exercise-item { padding: 18px 16px; display: flex; align-items: center; gap: 14px; border-radius: 16px; cursor: pointer; justify-content: space-between; }
-    .exercise-item:active { transform: scale(0.98); transition: transform 0.08s; }
-    .skeleton { border-radius: 14px; background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.6s ease-in-out infinite; }
-    .toast { position: fixed; bottom: calc(90px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(12px); background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 14px; padding: 12px 20px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 1px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.25s cubic-bezier(0.22,1,0.36,1); z-index: 200; border-left: 3px solid var(--green); }
-    .toast.error { border-left-color: var(--red); }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .bottom-nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(7,8,9,0.92); backdrop-filter: blur(28px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
-    .bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 4px; border-radius: 14px; color: var(--muted); text-decoration: none; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s, background 0.2s; }
-    .bottom-nav a svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-    .bottom-nav a.active { color: var(--accent); background: var(--accent-2); }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    @keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @media (min-width: 720px) { main { padding: 24px 20px 28px; } }
-    .panel, .footer, .legal-footer { padding: 20px; } .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 15vw, 68px); letter-spacing: 2px; line-height: .9; } .sub { margin-top: 8px; color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; } .text { margin-top: 14px; line-height: 1.8; color: var(--text); font-size: 15px; } .list { margin-top: 16px; display: grid; gap: 10px; } .list div { padding: 14px; color: var(--text); } .list strong, .footer a, .text a, .legal-footer a { color: var(--accent); } .muted { color: var(--muted); } .legal-footer, .footer { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; }
-    .hero,.panel,.app-footer{padding:20px}.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,16vw,80px);letter-spacing:2px;line-height:.9}.hero-sub,.section-title,.stat-label,.bar-day,.bar-val{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{padding:14px}.stat-value{font-size:36px;color:var(--accent)}.bars{display:grid;gap:10px}.trend-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.trend-toggle{display:inline-flex;gap:6px;padding:4px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2)}.trend-btn{border:none;background:transparent;color:var(--muted);border-radius:10px;padding:8px 10px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}.trend-btn.active{background:var(--accent-2);color:var(--accent)}.bar-row{display:grid;grid-template-columns:50px 1fr 72px;gap:10px;align-items:center}.bar-track{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(214,245,0,.45),var(--accent))}.app-footer{width:min(100%,600px);margin:0 auto;text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:transparent;border:none}.app-footer a{color:var(--accent);text-decoration:none}
+    body { min-height:100vh; color:var(--text); font-family:'Space Grotesk',sans-serif; background:var(--bg); padding-bottom:calc(80px + env(safe-area-inset-bottom)); }
+    nav { position:sticky; top:0; z-index:50; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; background:rgba(7,8,9,.85); backdrop-filter:blur(24px); border-bottom:1px solid var(--border); }
+    .nav-logo { text-decoration:none; color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:4px; line-height:1; }
+    .nav-logo span { color:var(--accent); }
+    .nav-btn { border:1px solid var(--border); background:var(--surface); color:var(--muted); border-radius:10px; padding:7px 13px; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
+    .nav-btn:hover { border-color:var(--border-hi); color:var(--accent); }
+
+    main { width:min(100%, 880px); margin:0 auto; padding:20px 16px 24px; display:grid; gap:16px; }
+    .panel { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; }
+    .hero-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(54px, 16vw, 80px); letter-spacing:2px; line-height:.9; }
+    .hero-sub,.section-title,.stat-label,.mini,.bar-day,.bar-val { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .stat { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:14px; }
+    .stat-value { font-size:36px; font-weight:600; color:var(--accent); line-height:1; }
+
+    .muscle-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+    .muscle-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:12px; display:grid; gap:8px; }
+    .muscle-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .muscle-name { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; }
+    .growth { font-family:'Space Mono',monospace; font-size:12px; font-weight:700; }
+    .growth.up { color:var(--green); }
+    .growth.down { color:var(--red); }
+    .spark { width:100%; height:48px; border-radius:10px; background:var(--surface-2); }
+    .spark polyline { stroke:var(--accent); filter:drop-shadow(0 0 4px rgba(214,245,0,.45)); }
+
+    .bars { display:grid; gap:10px; }
+    .bar-row { display:grid; grid-template-columns:50px 1fr 80px; gap:10px; align-items:center; }
+    .bar-track { height:10px; border-radius:999px; background:var(--surface-2); overflow:hidden; }
+    .bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,rgba(214,245,0,.45),var(--accent)); }
+
+    .skeleton { border-radius:12px; background:linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size:200% 100%; animation: shimmer 1.6s ease-in-out infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:50; background:rgba(7,8,9,.92); backdrop-filter:blur(28px); border-top:1px solid var(--border); display:grid; grid-template-columns:repeat(4,1fr); padding:8px 8px calc(8px + env(safe-area-inset-bottom)); }
+    .bottom-nav a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:8px 4px; border-radius:14px; color:var(--muted); text-decoration:none; font-family:'Space Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; }
+    .bottom-nav a svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+    .bottom-nav a.active { color:var(--accent); background:var(--accent-2); }
+
+    .app-footer { width:min(100%,880px); margin:0 auto; text-align:center; font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); padding:0 16px 10px; }
+    .app-footer a { color:var(--accent); text-decoration:none; }
+
+    @media (max-width: 520px) { .muscle-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -77,42 +65,33 @@
   </nav>
 
   <main>
-    <section class="hero">
-      <div class="hero-title">Analytics</div>
-      <p class="hero-sub">Simple signals to see if your training is moving forward.</p>
+    <section class="panel">
+      <div class="hero-title">ANALYTICS</div>
+      <p class="hero-sub">Real signals of progress, not just numbers.</p>
     </section>
 
     <section class="panel">
-      <p class="section-title">Last 14 Days Snapshot</p>
+      <p class="section-title" style="margin-bottom:12px;">Last 14 Days Snapshot</p>
       <div id="stats-grid" class="stats-grid">
-        <div class="skeleton" style="height:68px; margin-bottom:10px;"></div><div class="skeleton" style="height:68px; margin-bottom:10px; opacity:0.6;"></div><div class="skeleton" style="height:68px; opacity:0.35;"></div>
+        <div class="skeleton" style="height:70px"></div><div class="skeleton" style="height:70px"></div><div class="skeleton" style="height:70px"></div><div class="skeleton" style="height:70px"></div>
       </div>
-      <div id="strong-day" class="strong-day" style="display:none"></div>
     </section>
 
     <section class="panel">
-      <div class="trend-head">
-        <p class="section-title" style="margin:0">7-Day Volume Trend</p>
-        <div class="trend-toggle">
-          <button class="trend-btn active" id="btn-bar" onclick="setTrendMode('bar')">Bars</button>
-          <button class="trend-btn" id="btn-line" onclick="setTrendMode('line')">Line</button>
-        </div>
-      </div>
-      <div id="volume-bars" class="bars">
-        <div class="skeleton" style="height:68px; margin-bottom:10px;"></div><div class="skeleton" style="height:68px; margin-bottom:10px; opacity:0.6;"></div><div class="skeleton" style="height:68px; opacity:0.35;"></div>
-      </div>
-      <div id="volume-line" class="line-wrap" style="display:none"></div>
+      <p class="section-title" style="margin-bottom:12px;">Muscle Growth Overview</p>
+      <div id="muscle-grid" class="muscle-grid"></div>
     </section>
 
     <section class="panel">
-      <p class="section-title">Coaching Insight</p>
-      <div id="insight" class="message">Reviewing your recent work.</div>
+      <p class="section-title" style="margin-bottom:12px;">Weekly Training Load</p>
+      <div id="weekly-load" class="bars"></div>
     </section>
   </main>
 
   <footer class="app-footer">
     <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="about.html">About</a>
   </footer>
+
   <nav class="bottom-nav">
     <a href="dashboard.html">
       <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
@@ -135,182 +114,113 @@
   <script src="/static/api.js"></script>
   <script>
     requireAuth();
-    let trendMode = "bar";
-    let recentTrend = [];
 
-    function formatDate(date) {
-      return date.toISOString().slice(0, 10);
+    const MUSCLES = ["chest", "back", "legs", "shoulders", "biceps", "triceps"];
+
+    function fmtPct(v, digits = 1) {
+      const n = Number(v || 0);
+      const prefix = n > 0 ? "+" : "";
+      return `${prefix}${n.toFixed(digits)}%`;
     }
 
-    function getDatesBack(days) {
-      const arr = [];
-      const now = new Date();
-      for (let i = 0; i < days; i++) {
-        const d = new Date(now);
-        d.setDate(now.getDate() - i);
-        arr.push(d);
-      }
-      return arr.reverse();
+    function miniLabel(delta) {
+      const n = Number(delta || 0);
+      const prefix = n >= 0 ? "+" : "";
+      return `${prefix}${(n * 100).toFixed(1)}% this week`;
     }
 
-    async function loadAnalytics() {
-      const dates = getDatesBack(14);
-      const responses = await Promise.all(
-        dates.map(d => Logs.getByDate(formatDate(d)))
-      );
+    function sparkline(points, colorClass) {
+      const values = (points || []).map(v => Number(v || 0));
+      const safe = values.length ? values : new Array(14).fill(0);
+      const max = Math.max(...safe, 0.0001);
+      const w = 200;
+      const h = 48;
+      const pad = 5;
+      const uw = w - pad * 2;
+      const uh = h - pad * 2;
 
-      const dayStats = responses.map((res, idx) => {
-        const date = formatDate(dates[idx]);
-        if (!res.ok) return { date, sets: 0, volume: 0, exercises: 0 };
+      const coords = safe.map((v, i) => {
+        const x = pad + (uw * i) / Math.max(safe.length - 1, 1);
+        const y = pad + uh - (v / max) * uh;
+        return `${x},${isFinite(y) ? y : pad + uh}`;
+      }).join(" ");
 
-        const exercises = res.data.exercises || [];
-        let sets = 0;
-        let volume = 0;
-
-        exercises.forEach(ex => {
-          (ex.sets || []).forEach(s => {
-            sets += 1;
-            volume += (Number(s.weight) || 0) * (Number(s.reps) || 0);
-          });
-        });
-
-        return { date, sets, volume, exercises: exercises.length };
-      });
-
-      renderSnapshot(dayStats);
-      recentTrend = dayStats.slice(-7);
-      renderTrend(recentTrend);
-      renderInsight(dayStats);
-    }
-
-    function renderSnapshot(dayStats) {
-      const sessions = dayStats.filter(d => d.sets > 0).length;
-      const totalSets = dayStats.reduce((sum, d) => sum + d.sets, 0);
-      const totalVolume = dayStats.reduce((sum, d) => sum + d.volume, 0);
-      const avgSets = sessions ? Math.round(totalSets / sessions) : 0;
-
-      const grid = document.getElementById('stats-grid');
-      grid.innerHTML = `
-        <div class="stat">
-          <div class="stat-value">${sessions}</div>
-          <div class="stat-label">Training Days</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">${totalSets}</div>
-          <div class="stat-label">Total Sets</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">${Math.round(totalVolume)}</div>
-          <div class="stat-label">Volume (kg×reps)</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">${avgSets}</div>
-          <div class="stat-label">Avg Sets/Session</div>
-        </div>
+      return `
+        <svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+          <polyline fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" points="${coords}"></polyline>
+          <circle cx="${(w - pad)}" cy="${coords.split(' ').slice(-1)[0].split(',')[1]}" r="1.8" fill="var(--accent)"></circle>
+        </svg>
       `;
-
-      const best = dayStats.reduce((top, d) => d.volume > top.volume ? d : top, { date: '', volume: 0, sets: 0 });
-      const strong = document.getElementById('strong-day');
-      if (best.volume > 0) {
-        strong.style.display = 'block';
-        strong.textContent = `Strongest day: ${best.date} with ${best.sets} sets and ${Math.round(best.volume)} total volume.`;
-      } else {
-        strong.style.display = 'block';
-        strong.textContent = 'No logged sessions in the last 14 days yet. Start with one session to unlock trends.';
-      }
     }
 
-    function renderTrend(last7) {
-      const bars = document.getElementById('volume-bars');
-      const maxVol = Math.max(...last7.map(d => d.volume), 1);
+    function renderSnapshot(snapshot) {
+      const grid = document.getElementById("stats-grid");
+      const strength = Number(snapshot?.strength_trend || 0);
+      grid.innerHTML = `
+        <div class="stat"><div class="stat-value">${snapshot?.training_days || 0}</div><div class="stat-label">Training Days</div></div>
+        <div class="stat"><div class="stat-value">${snapshot?.total_sets || 0}</div><div class="stat-label">Total Sets</div></div>
+        <div class="stat"><div class="stat-value">${fmtPct(snapshot?.consistency_score || 0, 0)}</div><div class="stat-label">Consistency Score</div></div>
+        <div class="stat"><div class="stat-value" style="color:${strength >= 0 ? 'var(--green)' : 'var(--red)'}">${fmtPct(strength, 1)}</div><div class="stat-label">Strength Trend</div></div>
+      `;
+    }
 
-      bars.innerHTML = last7.map(d => {
+    function renderMuscles(muscles) {
+      const wrap = document.getElementById("muscle-grid");
+      wrap.innerHTML = MUSCLES.map((muscle) => {
+        const item = muscles?.[muscle] || { growth: 0, trend: new Array(14).fill(0), week_delta: 0 };
+        const growth = Number(item.growth || 0);
+        const up = growth >= 0;
+
+        return `
+          <article class="muscle-card">
+            <div class="muscle-top">
+              <div class="muscle-name">${muscle}</div>
+              <div class="growth ${up ? 'up' : 'down'}">${fmtPct(growth, 1)}</div>
+            </div>
+            ${sparkline(item.trend || [], up ? 'up' : 'down')}
+            <div class="mini" style="color:${up ? 'var(--green)' : 'var(--red)'}">${miniLabel(item.week_delta || 0)}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderWeeklyLoad(weekly) {
+      const wrap = document.getElementById("weekly-load");
+      const safe = Array.isArray(weekly) && weekly.length ? weekly : [];
+      const max = Math.max(...safe.map(d => Number(d.score || 0)), 0.0001);
+
+      if (!safe.length) {
+        wrap.innerHTML = `<div class="mini">No data yet. Keep logging to unlock load trends.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = safe.map((d) => {
         const day = new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' });
-        const width = Math.round((d.volume / maxVol) * 100);
+        const score = Number(d.score || 0);
+        const width = Math.max(2, Math.round((score / max) * 100));
+
         return `
           <div class="bar-row">
             <div class="bar-day">${day}</div>
             <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
-            <div class="bar-val">${Math.round(d.volume)}</div>
+            <div class="bar-val">${score.toFixed(2)}</div>
           </div>
         `;
-      }).join('');
-
-      renderTrendLine(last7, maxVol);
-    }
-
-    function renderTrendLine(last7, maxVol) {
-      const container = document.getElementById('volume-line');
-      const width = 700;
-      const height = 140;
-      const padX = 26;
-      const padY = 16;
-      const usableW = width - padX * 2;
-      const usableH = height - padY * 2;
-
-      const points = last7.map((d, i) => {
-        const x = padX + (usableW * i) / Math.max(last7.length - 1, 1);
-        const y = padY + usableH - (d.volume / maxVol) * usableH;
-        return `${x},${y}`;
-      });
-
-      const circles = last7.map((d, i) => {
-        const x = padX + (usableW * i) / Math.max(last7.length - 1, 1);
-        const y = padY + usableH - (d.volume / maxVol) * usableH;
-        return `<circle cx="${x}" cy="${y}" r="3.6" fill="var(--accent)" />`;
       }).join("");
-
-      container.innerHTML = `
-        <svg class="line-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-          <polyline
-            fill="none"
-            stroke="var(--accent)"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            points="${points.join(" ")}"
-          />
-          ${circles}
-        </svg>
-      `;
-      setTrendMode(trendMode);
     }
 
-    function setTrendMode(mode) {
-      trendMode = mode;
-      const barWrap = document.getElementById("volume-bars");
-      const lineWrap = document.getElementById("volume-line");
-      const barBtn = document.getElementById("btn-bar");
-      const lineBtn = document.getElementById("btn-line");
-
-      const showBars = mode === "bar";
-      barWrap.style.display = showBars ? "grid" : "none";
-      lineWrap.style.display = showBars ? "none" : "block";
-      barBtn.classList.toggle("active", showBars);
-      lineBtn.classList.toggle("active", !showBars);
-    }
-
-    function renderInsight(dayStats) {
-      const insight = document.getElementById('insight');
-      const sessions = dayStats.filter(d => d.sets > 0).length;
-      const recent = dayStats.slice(-7).filter(d => d.sets > 0).length;
-
-      if (sessions === 0) {
-        insight.textContent = 'No sessions logged yet. Your next workout is the most important one.';
+    async function loadAnalytics() {
+      const res = await Logs.getAnalytics();
+      if (!res.ok) {
+        renderSnapshot({ training_days: 0, total_sets: 0, consistency_score: 0, strength_trend: 0 });
+        renderMuscles({});
+        renderWeeklyLoad([]);
         return;
       }
 
-      if (recent >= 4) {
-        insight.textContent = 'Great consistency this week. Keep your frequency stable and focus on slight load/rep progress.';
-        return;
-      }
-
-      if (recent >= 2) {
-        insight.textContent = 'Solid momentum. Add one more session this week to make progress more predictable.';
-        return;
-      }
-
-      insight.textContent = 'You trained recently but consistency dropped. Start with a short session tomorrow to rebuild rhythm.';
+      renderSnapshot(res.data.snapshot || {});
+      renderMuscles(res.data.muscles || {});
+      renderWeeklyLoad(res.data.weekly_load || []);
     }
 
     loadAnalytics();
