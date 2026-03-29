@@ -57,6 +57,8 @@
 
     @media (max-width: 520px) { .muscle-grid { grid-template-columns:1fr; } }
   </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
   <nav>
@@ -224,6 +226,13 @@
     }
 
     loadAnalytics();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+    }
   </script>
 </body>
 </html>
